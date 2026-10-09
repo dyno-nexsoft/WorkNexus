@@ -674,5 +674,8 @@
   "translationApiSave": "Lưu",
   "translationApiRemove": "Xoá key",
   "translationApiLoadFailed": "Không đọc được key dịch đã lưu.",
-  "updateDialogHeadline": "Đã có phiên bản WorkNexus mới"
+  "updateDialogHeadline": "Đã có phiên bản WorkNexus mới",
+  "appVersionLabel": "Phiên bản",
+  "reportIssue": "Báo cáo vấn đề",
+  "reportIssueHint": "Gặp lỗi? Mở issue trên GitHub, đã điền sẵn phiên bản của bạn."
 }

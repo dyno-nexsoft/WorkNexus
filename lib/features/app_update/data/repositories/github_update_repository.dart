@@ -35,6 +35,10 @@ class GitHubUpdateRepository implements UpdateRepository {
   final void Function() _quit;
 
   @override
+  Future<String> currentVersion() async =>
+      (await PackageInfo.fromPlatform()).version;
+
+  @override
   Future<Result<UpdateVersionSnapshot?>> fetchLatestStableRelease() async {
     try {
       final packageInfo = await PackageInfo.fromPlatform();

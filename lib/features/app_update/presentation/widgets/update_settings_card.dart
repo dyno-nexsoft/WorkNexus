@@ -1,13 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../../core/platform/open_external.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../domain/usecases/build_issue_report_url.dart';
 import '../providers/update_provider.dart';
 
 class UpdateSettingsCard extends ConsumerWidget {
@@ -18,6 +22,7 @@ class UpdateSettingsCard extends ConsumerWidget {
     final c = context.colors;
     final l = AppL10n.of(context);
     final check = ref.watch(updateCheckProvider);
+    final version = ref.watch(appVersionProvider).asData?.value;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,25 +44,62 @@ class UpdateSettingsCard extends ConsumerWidget {
             borderRadius: BorderRadius.circular(context.radii.md),
             border: Border.all(color: c.border),
           ),
-          child: Row(
+          child: Column(
             children: [
-              Expanded(
-                child: Text(
-                  l.appUpdatesTitle,
-                  style: context.typography.body.copyWith(color: c.textPrimary),
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      version == null
+                          ? l.appVersionLabel
+                          : '${l.appVersionLabel} $version',
+                      style: context.typography.body.copyWith(
+                        color: c.textPrimary,
+                      ),
+                    ),
+                  ),
+                  AppButton.outlinedNeutral(
+                    isLoading: check.isLoading,
+                    onPressed: () => _checkForUpdates(context, ref),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(PhosphorIconsLight.arrowClockwise, size: 16),
+                        SizedBox(width: context.spacing.sm),
+                        Text(l.checkForUpdates),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              AppButton.outlinedNeutral(
-                isLoading: check.isLoading,
-                onPressed: () => _checkForUpdates(context, ref),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(PhosphorIconsLight.arrowClockwise, size: 16),
-                    SizedBox(width: context.spacing.sm),
-                    Text(l.checkForUpdates),
-                  ],
-                ),
+              SizedBox(height: context.spacing.lg),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      l.reportIssueHint,
+                      style: context.typography.paragraph.copyWith(
+                        color: c.textSecondary,
+                      ),
+                    ),
+                  ),
+                  AppButton.outlinedNeutral(
+                    onPressed: () => openExternally(
+                      const BuildIssueReportUrl()(
+                        appVersion: version ?? '',
+                        system: Platform.operatingSystemVersion,
+                      ).toString(),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(PhosphorIconsLight.bug, size: 16),
+                        SizedBox(width: context.spacing.sm),
+                        Text(l.reportIssue),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
