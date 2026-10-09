@@ -41,7 +41,11 @@ import '../../features/chat/domain/repositories/sticker_repository.dart';
 import '../../features/chat/domain/repositories/wallpaper_repository.dart';
 import '../../features/chat/domain/usecases/translate_chat_message.dart';
 import '../../features/connections/data/local_connection_repository.dart';
+import '../../features/connections/data/repositories/local_zentao_profile_repository.dart';
 import '../../features/connections/domain/repositories/connection_repository.dart';
+import '../../features/connections/domain/repositories/zentao_profile_repository.dart';
+import '../../features/connections/domain/usecases/refresh_zentao_profile.dart';
+import '../../features/connections/domain/usecases/update_zentao_profile.dart';
 import '../../features/sync/data/merge_request_link_fetcher.dart';
 import '../../features/sync/data/sync_service.dart';
 import '../../features/translation/data/api_translation_service.dart';
@@ -146,6 +150,21 @@ abstract class ServiceModule {
   @lazySingleton
   ConnectionRepository connectionRepository(AppDatabase db) =>
       LocalConnectionRepository(db);
+
+  @lazySingleton
+  ZenTaoProfileRepository zenTaoProfileRepository(
+    AppDatabase db,
+    CredentialStore credentials,
+  ) => LocalZenTaoProfileRepository(db, credentials);
+
+  @lazySingleton
+  RefreshZenTaoProfile refreshZenTaoProfile(
+    ZenTaoProfileRepository repository,
+  ) => RefreshZenTaoProfile(repository);
+
+  @lazySingleton
+  UpdateZenTaoProfile updateZenTaoProfile(ZenTaoProfileRepository repository) =>
+      UpdateZenTaoProfile(repository);
 
   @lazySingleton
   TicketRepository ticketRepository(AppDatabase db) =>
