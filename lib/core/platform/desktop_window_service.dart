@@ -14,6 +14,7 @@ class DesktopWindowService {
 
   static bool get isDesktop =>
       Platform.isMacOS || Platform.isWindows || Platform.isLinux;
+  static bool get isWindows => Platform.isWindows;
 
   /// Hides the native title bar and shows a centered window. Safe no-op off desktop.
   Future<void> initialize() async {
@@ -94,8 +95,8 @@ class DesktopWindowService {
       backgroundColor: const Color(0x00000000),
       skipTaskbar: false,
       title: appWindowTitle,
-      titleBarStyle: isWindows ? TitleBarStyle.normal : TitleBarStyle.hidden,
-      windowButtonVisibility: true,
+      titleBarStyle: TitleBarStyle.hidden,
+      windowButtonVisibility: !isWindows,
     );
   }
 }
