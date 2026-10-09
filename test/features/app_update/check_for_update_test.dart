@@ -14,39 +14,51 @@ import 'package:work_nexus/features/app_update/presentation/widgets/update_setti
 import 'package:work_nexus/l10n/app_localizations.dart';
 
 void main() {
-  testWidgets('shows a notification when a newer stable release is available', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          updateCheckProvider.overrideWith(
-            (ref) async => const Ok(
-              AvailableUpdate(
-                currentVersion: '1.0.0',
-                latestVersion: 'v1.1.0',
-                releaseUrl: 'https://github.com/example/WorkNexus/releases',
+  testWidgets(
+    'offers the update in a dialog when a newer stable release is available',
+    (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            updateCheckProvider.overrideWith(
+              (ref) async => const Ok(
+                AvailableUpdate(
+                  currentVersion: '1.0.0',
+                  latestVersion: 'v1.1.0',
+                  releaseUrl: 'https://github.com/example/WorkNexus/releases',
+                ),
               ),
             ),
-          ),
-        ],
-        child: const MaterialApp(
-          localizationsDelegates: [
-            AppL10n.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: AppL10n.supportedLocales,
-          home: UpdateNotificationListener(child: Scaffold(body: SizedBox())),
+          child: MaterialApp(
+            theme: buildAppTheme(
+              variant: AppThemeVariant.light,
+              surface: SurfaceStyle.flat,
+              density: AppDensity.comfortable,
+            ),
+            localizationsDelegates: const [
+              AppL10n.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppL10n.supportedLocales,
+            home: const UpdateNotificationListener(
+              child: Scaffold(body: SizedBox()),
+            ),
+          ),
         ),
-      ),
-    );
+      );
 
-    await tester.pumpAndSettle();
+      await tester.pumpAndSettle();
 
-    expect(find.text('WorkNexus v1.1.0 is available.'), findsOneWidget);
-  });
+      expect(
+        find.text('A new version of WorkNexus is available'),
+        findsOneWidget,
+      );
+      expect(find.text('v1.1.0'), findsOneWidget);
+    },
+  );
 
   testWidgets('manual update check reports when the app is up to date', (
     tester,

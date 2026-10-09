@@ -8,8 +8,10 @@ import 'update_installer.dart';
 class MacosUpdateInstaller extends UpdateInstaller {
   const MacosUpdateInstaller();
 
-  // $1 pid to wait for, $2 installed .app, $3 new .app.
+  // $1 pid to wait for, $2 installed .app, $3 new .app, $4 log file.
   static const _script = r'''#!/bin/sh
+exec >>"$4" 2>&1
+set -x
 while kill -0 "$1" 2>/dev/null; do sleep 0.3; done
 backup="$2.previous"
 rm -rf "$backup"
@@ -60,6 +62,7 @@ open "$2"
       '$pid',
       installPath,
       stagedPath,
+      '$scriptDir/update.log',
     ], mode: ProcessStartMode.detached);
   }
 }

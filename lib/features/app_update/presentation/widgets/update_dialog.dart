@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/platform/open_external.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -28,65 +29,188 @@ class UpdateDialog extends ConsumerWidget {
     final busy = state is UpdateDownloading || state is UpdateInstalling;
     final failed = state is UpdateFailed || !update.canInstallInApp;
 
-    return AlertDialog(
+    return Dialog(
       backgroundColor: c.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(context.radii.lg),
       ),
-      title: Text(
-        l.updateAvailable(update.latestVersion),
-        style: context.typography.title.copyWith(color: c.textPrimary),
-      ),
-      content: SizedBox(
-        width: 420,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (busy) ...[
-              LinearProgressIndicator(
-                value: state is UpdateDownloading && state.progress > 0
-                    ? state.progress
-                    : null,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 420),
+        child: Padding(
+          padding: EdgeInsets.all(context.spacing.xl3),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const _AppBadge(),
+              SizedBox(height: context.spacing.xl),
+              Text(
+                l.updateDialogHeadline,
+                textAlign: TextAlign.center,
+                style: context.typography.title.copyWith(color: c.textPrimary),
               ),
               SizedBox(height: context.spacing.md),
-              Text(
-                state is UpdateInstalling
-                    ? l.updateRestarting
-                    : l.updateDownloading,
-                style: context.typography.paragraph.copyWith(
-                  color: c.textSecondary,
-                ),
+              _VersionChange(
+                from: update.currentVersion,
+                to: update.latestVersion,
               ),
-            ] else
-              Text(
-                failed ? l.updateInstallFailed : l.updateRestartHint,
-                style: context.typography.paragraph.copyWith(
-                  color: failed ? c.error : c.textSecondary,
+              SizedBox(height: context.spacing.xl2),
+              if (busy)
+                _Progress(state: state)
+              else
+                Text(
+                  failed ? l.updateInstallFailed : l.updateRestartHint,
+                  textAlign: TextAlign.center,
+                  style: context.typography.paragraph.copyWith(
+                    color: failed ? c.error : c.textSecondary,
+                  ),
                 ),
+              SizedBox(height: context.spacing.xl3),
+              Row(
+                children: [
+                  Expanded(
+                    child: AppButton.outlinedNeutral(
+                      onPressed: busy
+                          ? null
+                          : () => Navigator.of(context).pop(),
+                      child: Text(l.updateLater),
+                    ),
+                  ),
+                  SizedBox(width: context.spacing.lg),
+                  Expanded(
+                    child: failed
+                        ? AppButton.filled(
+                            onPressed: () => openExternally(update.releaseUrl),
+                            child: Text(l.updateOpenReleasePage),
+                          )
+                        : AppButton.filled(
+                            isLoading: busy,
+                            onPressed: () => ref
+                                .read(updateControllerProvider.notifier)
+                                .installAndRestart(update),
+                            child: Text(l.updateRestartNow),
+                          ),
+                  ),
+                ],
               ),
-          ],
+            ],
+          ),
         ),
       ),
-      actions: [
-        AppButton.textNeutral(
-          onPressed: busy ? null : () => Navigator.of(context).pop(),
-          child: Text(l.updateLater),
-        ),
-        SizedBox(width: context.spacing.md),
-        if (failed)
-          AppButton.filled(
-            onPressed: () => openExternally(update.releaseUrl),
-            child: Text(l.updateOpenReleasePage),
-          )
-        else
-          AppButton.filled(
-            isLoading: busy,
-            onPressed: () => ref
-                .read(updateControllerProvider.notifier)
-                .installAndRestart(update),
-            child: Text(l.updateRestartNow),
+    );
+  }
+}
+
+class _AppBadge extends StatelessWidget {
+  const _AppBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Container(
+      width: 64,
+      height: 64,
+      decoration: BoxDecoration(
+        color: c.surfaceSubtle,
+        borderRadius: BorderRadius.circular(context.radii.lg),
+        border: Border.all(color: c.border),
+      ),
+      child: Icon(PhosphorIconsLight.downloadSimple, size: 30, color: c.accent),
+    );
+  }
+}
+
+/// `1.2.0 → v1.3.0`, as two pills so the new version stands out.
+class _VersionChange extends StatelessWidget {
+  const _VersionChange({required this.from, required this.to});
+
+  final String from;
+  final String to;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _Pill(text: _plain(from), color: c.textSecondary),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: context.spacing.md),
+          child: Icon(
+            PhosphorIconsLight.arrowRight,
+            size: 16,
+            color: c.textTertiary,
           ),
+        ),
+        _Pill(text: _plain(to), color: c.accent, strong: true),
+      ],
+    );
+  }
+
+  static String _plain(String version) =>
+      version.startsWith('v') ? version : 'v$version';
+}
+
+class _Pill extends StatelessWidget {
+  const _Pill({required this.text, required this.color, this.strong = false});
+
+  final String text;
+  final Color color;
+  final bool strong;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: context.spacing.lg,
+        vertical: context.spacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: c.surfaceSubtle,
+        borderRadius: BorderRadius.circular(context.radii.xl),
+        border: Border.all(color: strong ? color : c.border),
+      ),
+      child: Text(
+        text,
+        style: context.typography.captionStrong.copyWith(color: color),
+      ),
+    );
+  }
+}
+
+class _Progress extends StatelessWidget {
+  const _Progress({required this.state});
+
+  final UpdateState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final l = AppL10n.of(context);
+    final progress = state is UpdateDownloading
+        ? (state as UpdateDownloading).progress
+        : null;
+    final installing = state is UpdateInstalling;
+    return Column(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(context.radii.xl),
+          child: LinearProgressIndicator(
+            minHeight: 8,
+            value: installing || progress == null || progress <= 0
+                ? null
+                : progress,
+            backgroundColor: c.surfaceSubtle,
+            color: c.accent,
+          ),
+        ),
+        SizedBox(height: context.spacing.md),
+        Text(
+          installing
+              ? l.updateRestarting
+              : '${l.updateDownloading} ${((progress ?? 0) * 100).round()}%',
+          style: context.typography.paragraph.copyWith(color: c.textSecondary),
+        ),
       ],
     );
   }

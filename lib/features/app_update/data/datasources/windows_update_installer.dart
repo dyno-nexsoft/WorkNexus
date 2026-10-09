@@ -10,7 +10,8 @@ class WindowsUpdateInstaller extends UpdateInstaller {
   const WindowsUpdateInstaller();
 
   static const _script =
-      r'''param([int]$ProcId, [string]$Source, [string]$Target, [string]$Exe)
+      r'''param([int]$ProcId, [string]$Source, [string]$Target, [string]$Exe, [string]$Log)
+Start-Transcript -Path $Log -Append | Out-Null
 try { Wait-Process -Id $ProcId -Timeout 120 -ErrorAction Stop } catch {}
 robocopy $Source $Target /E /R:30 /W:1 /NFL /NDL /NJH /NJS /NP | Out-Null
 Start-Process -FilePath $Exe
@@ -57,6 +58,8 @@ Start-Process -FilePath $Exe
       installPath,
       '-Exe',
       Platform.resolvedExecutable,
+      '-Log',
+      '$scriptDir\\update.log',
     ], mode: ProcessStartMode.detached);
   }
 }

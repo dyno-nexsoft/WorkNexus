@@ -9,7 +9,6 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../providers/update_provider.dart';
-import 'update_dialog.dart';
 
 class UpdateSettingsCard extends ConsumerWidget {
   const UpdateSettingsCard({super.key});
@@ -74,12 +73,8 @@ class UpdateSettingsCard extends ConsumerWidget {
 
     result.fold<void>(
       (update) {
-        if (update != null) {
-          showDialog<void>(
-            context: context,
-            builder: (_) => UpdateDialog(update: update),
-          );
-        } else {
+        // A newer release is offered by UpdateNotificationListener's dialog.
+        if (update == null) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(

@@ -673,5 +673,6 @@
   "translationApiUseHint": "Tắt: bản dịch lại đi qua OpenCode.",
   "translationApiSave": "Lưu",
   "translationApiRemove": "Xoá key",
-  "translationApiLoadFailed": "Không đọc được key dịch đã lưu."
+  "translationApiLoadFailed": "Không đọc được key dịch đã lưu.",
+  "updateDialogHeadline": "Đã có phiên bản WorkNexus mới"
 }

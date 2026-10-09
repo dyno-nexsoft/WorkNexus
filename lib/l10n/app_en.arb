@@ -726,5 +726,6 @@
   "translationApiUseHint": "Off: translations go through OpenCode again.",
   "translationApiSave": "Save",
   "translationApiRemove": "Remove key",
-  "translationApiLoadFailed": "Couldn't read the saved translation key."
+  "translationApiLoadFailed": "Couldn't read the saved translation key.",
+  "updateDialogHeadline": "A new version of WorkNexus is available"
 }
