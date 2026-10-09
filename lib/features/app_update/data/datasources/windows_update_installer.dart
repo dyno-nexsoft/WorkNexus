@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import '../../../../core/config/app_config.dart';
@@ -42,7 +43,10 @@ Start-Process -FilePath $Exe
   }) async {
     final script = File('$scriptDir\\install_update.ps1');
     await script.writeAsString(_script);
-    await Process.start('powershell.exe', [
+    // Not `ProcessStartMode.detached`: PowerShell started without a console
+    // never ran the script (the app quit and nothing was installed). A normal
+    // child outlives this process all the same.
+    final helper = await Process.start('powershell.exe', [
       '-NoProfile',
       '-ExecutionPolicy',
       'Bypass',
@@ -60,6 +64,9 @@ Start-Process -FilePath $Exe
       Platform.resolvedExecutable,
       '-Log',
       '$scriptDir\\update.log',
-    ], mode: ProcessStartMode.detached);
+    ]);
+    unawaited(helper.stdin.close().catchError((_) {}));
+    unawaited(helper.stdout.drain<void>());
+    unawaited(helper.stderr.drain<void>());
   }
 }
