@@ -3,7 +3,6 @@
   "packages": {
     ".": {
       "release-type": "dart",
-      "release-as": "1.1.1",
       "changelog-path": "CHANGELOG.md",
       "include-component-in-tag": false,
       "bump-minor-pre-major": true,
