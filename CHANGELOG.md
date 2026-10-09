@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.0](https://github.com/dyno-nexsoft/WorkNexus/compare/v1.4.1...v1.5.0) (2026-10-09)
+
+
+### 🚀 Features
+
+* **settings:** merge the three translation cards into one expandable card ([ac1d54d](https://github.com/dyno-nexsoft/WorkNexus/commit/ac1d54d0629c39f31c83969840f62dcb82267319))
+* **update:** show the app version and a report-an-issue button in the update card ([5d97547](https://github.com/dyno-nexsoft/WorkNexus/commit/5d975473b9b7ac690c17c0756db5f9895aad1f01))
+
 ## [1.4.1](https://github.com/dyno-nexsoft/WorkNexus/compare/v1.4.0...v1.4.1) (2026-10-09)
 
 
