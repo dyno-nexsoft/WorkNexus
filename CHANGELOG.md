@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.2.0](https://github.com/dyno-nexsoft/WorkNexus/compare/v1.1.1...v1.2.0) (2026-10-09)
+
+
+### 🚀 Features
+
+* **chat:** chat text size; tidier pinned bar, members strip and tab dividers ([26ced2b](https://github.com/dyno-nexsoft/WorkNexus/commit/26ced2b90bbdbac2aeb31856c418a689e359f485))
+* **chat:** role tabs and members panel, server role names, full Emojione, notification jump ([df9dd97](https://github.com/dyno-nexsoft/WorkNexus/commit/df9dd97092df7db88b872d7980df41c2020b6b94))
+* **chat:** ZenTao bot cards open the ticket, MR cards refresh on return ([9d3dde8](https://github.com/dyno-nexsoft/WorkNexus/commit/9d3dde81490094ddd92c54b686752a97b5ee3dcf))
+* in-app updater, single instance, chat notifications & storage ([6d56c44](https://github.com/dyno-nexsoft/WorkNexus/commit/6d56c444012c0ae24e4ac80324e3603b52dedecd))
+
+
+### 🐛 Bug Fixes
+
+* **chat:** drop "View details" under a ZenTao ticket card ([607365c](https://github.com/dyno-nexsoft/WorkNexus/commit/607365c979a0da1078ca9140a97c6ec4ccdd6274))
+
 ## [1.1.1](https://github.com/dyno-nexsoft/WorkNexus/compare/v1.1.0...v1.1.1) (2026-10-09)
 
 
