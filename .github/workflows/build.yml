@@ -14,9 +14,9 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  # Pin the repo's exact toolchain (Flutter 3.38.8 -> Dart 3.10.7).
+  # Pin the repo's exact toolchain (Flutter 3.44.8 -> Dart 3.12.2).
   # No fvm on CI; subosito downloads this exact version.
-  FLUTTER_VERSION: "3.38.8"
+  FLUTTER_VERSION: "3.44.8"
 
 jobs:
   release-please:
@@ -34,6 +34,8 @@ jobs:
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+          # Force the requested patch test release once; remove after v1.1.1 publishes.
+          release-as: "1.1.1"
 
   # ───────────────────────────── macOS ─────────────────────────────
   build-macos:
