@@ -677,5 +677,6 @@
   "updateDialogHeadline": "Đã có phiên bản WorkNexus mới",
   "appVersionLabel": "Phiên bản",
   "reportIssue": "Báo cáo vấn đề",
-  "reportIssueHint": "Gặp lỗi? Mở issue trên GitHub, đã điền sẵn phiên bản của bạn."
+  "reportIssueHint": "Gặp lỗi? Mở issue trên GitHub, đã điền sẵn phiên bản của bạn.",
+  "translationSection": "Dịch thuật"
 }

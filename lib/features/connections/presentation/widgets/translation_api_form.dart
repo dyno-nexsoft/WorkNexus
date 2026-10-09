@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/platform/open_external.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/app_button.dart';
@@ -15,52 +14,26 @@ import '../../../translation/domain/value_objects/translation_api_preset.dart';
 import '../../../translation/presentation/translation_api_providers.dart';
 import 'connection_text_field.dart';
 
-/// Settings section to translate with the user's own API key (Gemini, Groq,
+/// The form to translate with the user's own API key (Gemini, Groq,
 /// OpenRouter, a local Ollama or any OpenAI-compatible endpoint) instead of the
 /// OpenCode CLI. Left unset, OpenCode keeps doing the translating.
-class TranslationApiCard extends ConsumerWidget {
-  const TranslationApiCard({super.key});
+class TranslationApiForm extends ConsumerWidget {
+  const TranslationApiForm({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final c = context.colors;
     final l = AppL10n.of(context);
-    final config = ref.watch(translationApiConfigProvider);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l.translationApiSection,
-          style: context.typography.titleLg.copyWith(color: c.textPrimary),
-        ),
-        SizedBox(height: context.spacing.xs),
-        Text(
-          l.translationApiSubtitle,
-          style: context.typography.paragraph.copyWith(color: c.textSecondary),
-        ),
-        SizedBox(height: context.spacing.xl2),
-        Container(
-          padding: EdgeInsets.all(context.spacing.xl2),
-          decoration: BoxDecoration(
-            color: c.surface,
-            borderRadius: BorderRadius.circular(context.radii.md),
-            border: Border.all(color: c.border),
-          ),
-          child: switch (config) {
-            AsyncData(:final value) => _ApiForm(
-              saved: value.valueOrNull,
-              loadFailed: value.isErr,
-            ),
-            AsyncError() => AppInlineNote(
-              text: l.translationApiLoadFailed,
-              isError: true,
-            ),
-            _ => const AppInlineSpinner(),
-          },
-        ),
-      ],
-    );
+    return switch (ref.watch(translationApiConfigProvider)) {
+      AsyncData(:final value) => _ApiForm(
+        saved: value.valueOrNull,
+        loadFailed: value.isErr,
+      ),
+      AsyncError() => AppInlineNote(
+        text: l.translationApiLoadFailed,
+        isError: true,
+      ),
+      _ => const AppInlineSpinner(),
+    };
   }
 }
 

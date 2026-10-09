@@ -730,5 +730,6 @@
   "updateDialogHeadline": "A new version of WorkNexus is available",
   "appVersionLabel": "Version",
   "reportIssue": "Report an issue",
-  "reportIssueHint": "Found a problem? Open a GitHub issue with your version filled in."
+  "reportIssueHint": "Found a problem? Open a GitHub issue with your version filled in.",
+  "translationSection": "Translation"
 }
