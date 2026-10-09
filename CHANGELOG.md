@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.1.1](https://github.com/dyno-nexsoft/WorkNexus/compare/v1.1.0...v1.1.1) (2026-10-09)
+
+
+### 🚀 Features
+
+* **desktop:** add Windows and macOS tray menus ([0dbe02d](https://github.com/dyno-nexsoft/WorkNexus/commit/0dbe02d15b13f254f55fe5974c0b6cf568d532a4))
+
+
+### 🐛 Bug Fixes
+
+* **macos:** restore hidden window when reopening from Dock ([81b67f2](https://github.com/dyno-nexsoft/WorkNexus/commit/81b67f20fbc05e621f02ab7461e66760ab1472ba))
+* **release:** prepare v1.1.1 stable update ([90367ff](https://github.com/dyno-nexsoft/WorkNexus/commit/90367ffd0a9c87db54aea0498cdd5618b5d73477))
+* **windows:** add caption controls to the app title bar ([03da24d](https://github.com/dyno-nexsoft/WorkNexus/commit/03da24de7dbdf450009d2a6f4607bed14df01138))
+
 ## [1.1.0](https://github.com/dyno-nexsoft/WorkNexus/compare/v1.0.0...v1.1.0) (2026-10-09)
 
 
