@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/dyno-nexsoft/WorkNexus/compare/v1.4.0...v1.4.1) (2026-10-09)
+
+
+### 🐛 Bug Fixes
+
+* **update:** start the Windows installer helper as a normal child process ([d0d4349](https://github.com/dyno-nexsoft/WorkNexus/commit/d0d434951d724de47734491055f98114b1e07c15))
+
 ## [1.4.0](https://github.com/dyno-nexsoft/WorkNexus/compare/v1.3.0...v1.4.0) (2026-10-09)
 
 
