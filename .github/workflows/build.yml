@@ -185,7 +185,7 @@ jobs:
           set -euo pipefail
           stable_tags="$(gh api --paginate \
             "repos/${GITHUB_REPOSITORY}/releases" \
-            | jq -s 'add | map(select(.draft == false and .prerelease == false)) | sort_by(.published_at) | reverse | map(.tag_name) | .[]')"
+            | jq -rs 'add | map(select(.draft == false and .prerelease == false)) | sort_by(.published_at) | reverse | map(.tag_name) | .[]')"
           latest_tag="$(printf '%s\n' "$stable_tags" | sed -n '1p')"
           if [[ -z "$latest_tag" ]]; then
             echo "No published stable release to retain."
