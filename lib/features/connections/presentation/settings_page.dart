@@ -17,6 +17,7 @@ import 'gitlab_connection_dialog.dart';
 import 'settings_providers.dart';
 import 'widgets/account_list.dart';
 import 'widgets/opencode_key_card.dart';
+import 'widgets/translation_api_card.dart';
 import 'widgets/translation_language_card.dart';
 import 'widgets/translation_model_card.dart';
 
@@ -102,6 +103,8 @@ class SettingsPage extends ConsumerWidget {
                   const TranslationLanguageCard(),
                   SizedBox(height: context.spacing.xl4),
                   const TranslationModelCard(),
+                  SizedBox(height: context.spacing.xl4),
+                  const TranslationApiCard(),
                   if (footer != null) ...[
                     SizedBox(height: context.spacing.xl4),
                     footer!,

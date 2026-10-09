@@ -714,5 +714,17 @@
   "updateLater": "Later",
   "updateRestartNow": "Update & restart",
   "updateInstallFailed": "The update could not be installed automatically. Download it from the release page instead.",
-  "updateOpenReleasePage": "Open release page"
+  "updateOpenReleasePage": "Open release page",
+  "translationApiSection": "Translate with an API key",
+  "translationApiSubtitle": "Use your own key (Gemini, Groq, OpenRouter, a local Ollama…) instead of the OpenCode CLI. The key is kept in the OS keychain.",
+  "translationApiProvider": "Provider",
+  "translationApiBaseUrl": "API base URL",
+  "translationApiModel": "Model",
+  "translationApiKey": "API key",
+  "translationApiGetKey": "Get a key",
+  "translationApiUse": "Translate with this key",
+  "translationApiUseHint": "Off: translations go through OpenCode again.",
+  "translationApiSave": "Save",
+  "translationApiRemove": "Remove key",
+  "translationApiLoadFailed": "Couldn't read the saved translation key."
 }

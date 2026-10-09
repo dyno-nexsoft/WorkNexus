@@ -44,9 +44,14 @@ import '../../features/connections/data/local_connection_repository.dart';
 import '../../features/connections/domain/repositories/connection_repository.dart';
 import '../../features/sync/data/merge_request_link_fetcher.dart';
 import '../../features/sync/data/sync_service.dart';
+import '../../features/translation/data/api_translation_service.dart';
 import '../../features/translation/data/opencode_translation_service.dart';
+import '../../features/translation/data/repositories/credential_translation_api_config_repository.dart';
 import '../../features/translation/data/repositories/local_translation_repository.dart';
+import '../../features/translation/data/routing_translation_service.dart';
 import '../../features/translation/domain/adapters/translation_service.dart';
+import '../../features/translation/domain/entities/translation_api_config.dart';
+import '../../features/translation/domain/repositories/translation_api_config_repository.dart';
 import '../config/app_config.dart';
 import '../database/database.dart';
 import '../debug/app_talker.dart';
@@ -215,7 +220,22 @@ abstract class ServiceModule {
       InMemoryAgentSessionRepository();
 
   @lazySingleton
-  TranslationService get translationService => OpenCodeTranslationService();
+  TranslationApiConfigRepository translationApiConfigRepository(
+    CredentialStore credentials,
+  ) => CredentialTranslationApiConfigRepository(credentials);
+
+  @lazySingleton
+  TranslationService translationService(
+    TranslationApiConfigRepository configs,
+  ) {
+    Future<TranslationApiConfig?> config() async =>
+        (await configs.load()).valueOrNull;
+    return RoutingTranslationService(
+      api: ApiTranslationService(Dio(), config),
+      openCode: OpenCodeTranslationService(),
+      config: config,
+    );
+  }
 
   @lazySingleton
   OpenCodeCli get openCodeCli => const OpenCodeCliRunner();

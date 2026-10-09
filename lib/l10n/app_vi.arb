@@ -661,5 +661,17 @@
   "updateLater": "Để sau",
   "updateRestartNow": "Cập nhật & khởi động lại",
   "updateInstallFailed": "Không thể tự động cài bản cập nhật. Hãy tải về từ trang phát hành.",
-  "updateOpenReleasePage": "Mở trang phát hành"
+  "updateOpenReleasePage": "Mở trang phát hành",
+  "translationApiSection": "Dịch bằng API key",
+  "translationApiSubtitle": "Dùng key của bạn (Gemini, Groq, OpenRouter, Ollama chạy local…) thay cho OpenCode CLI. Key được lưu trong keychain của hệ điều hành.",
+  "translationApiProvider": "Nhà cung cấp",
+  "translationApiBaseUrl": "API base URL",
+  "translationApiModel": "Model",
+  "translationApiKey": "API key",
+  "translationApiGetKey": "Lấy key",
+  "translationApiUse": "Dịch bằng key này",
+  "translationApiUseHint": "Tắt: bản dịch lại đi qua OpenCode.",
+  "translationApiSave": "Lưu",
+  "translationApiRemove": "Xoá key",
+  "translationApiLoadFailed": "Không đọc được key dịch đã lưu."
 }

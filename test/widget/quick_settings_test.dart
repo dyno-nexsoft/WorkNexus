@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:work_nexus/core/error/result.dart';
+import 'package:work_nexus/features/translation/presentation/translation_api_providers.dart';
 import 'package:work_nexus/app/shell/title_bar.dart';
 import 'package:work_nexus/core/database/database.dart';
 import 'package:work_nexus/core/debug/talker_debug_overlay.dart';
@@ -368,6 +370,9 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         openCodeModelsProvider.overrideWith((ref) async => const <String>[]),
+        translationApiConfigProvider.overrideWith(
+          (ref) async => const Ok(null),
+        ),
       ],
     );
     addTearDown(container.dispose);
