@@ -9,6 +9,8 @@
       }
     }
   },
+  "trayOpenApp": "Open WorkNexus",
+  "trayQuitApp": "Quit WorkNexus",
   "board": "Board",
   "list": "List",
   "integrations": "Integrations",

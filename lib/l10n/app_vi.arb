@@ -9,6 +9,8 @@
       }
     }
   },
+  "trayOpenApp": "Mở WorkNexus",
+  "trayQuitApp": "Thoát WorkNexus",
   "board": "Bảng",
   "list": "Danh sách",
   "integrations": "Kết nối",
