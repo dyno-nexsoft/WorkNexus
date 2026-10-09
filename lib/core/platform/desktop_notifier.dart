@@ -39,14 +39,17 @@ class DesktopNotifier {
     }
     try {
       final ok = await _plugin.initialize(
-        settings: const InitializationSettings(
-          macOS: DarwinInitializationSettings(requestBadgePermission: false),
+        settings: InitializationSettings(
+          macOS: const DarwinInitializationSettings(
+            requestBadgePermission: false,
+          ),
           windows: WindowsInitializationSettings(
             appName: AppConfig.appName,
             appUserModelId: AppConfig.windowsAppId,
             guid: AppConfig.windowsGuid,
+            iconPath: _windowsIconPath(),
           ),
-          linux: LinuxInitializationSettings(defaultActionName: 'Open'),
+          linux: const LinuxInitializationSettings(defaultActionName: 'Open'),
         ),
         onDidReceiveNotificationResponse: (response) {
           final payload = response.payload;
@@ -120,17 +123,56 @@ class DesktopNotifier {
     required String title,
     required String body,
     String? payload,
+    String? imageUrl,
   }) async {
     if (!await initialize()) {
       appTalker.warning('Notifications: not allowed, "$title" not shown');
       return;
     }
     try {
-      await _plugin.show(id: id, title: title, body: body, payload: payload);
+      await _plugin.show(
+        id: id,
+        title: title,
+        body: body,
+        payload: payload,
+        notificationDetails: _details(imageUrl),
+      );
       appTalker.info('Notifications: shown "$title"');
     } on Exception catch (e, st) {
       // Not worth interrupting the user over; the unread badge still shows.
       appTalker.handle(e, st, 'Notifications: show failed');
     }
+  }
+
+  /// The sender's picture in place of the app logo on a Windows toast. The
+  /// toast fetches the https URL itself; other platforms have no equivalent.
+  NotificationDetails? _details(String? imageUrl) {
+    final uri = imageUrl == null ? null : Uri.tryParse(imageUrl);
+    if (uri == null ||
+        !uri.hasScheme ||
+        defaultTargetPlatform != TargetPlatform.windows) {
+      return null;
+    }
+    return NotificationDetails(
+      windows: WindowsNotificationDetails(
+        images: [
+          WindowsImage(
+            uri,
+            altText: '',
+            placement: WindowsImagePlacement.appLogoOverride,
+            crop: WindowsImageCrop.circle,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// The bundled app icon, shown beside the app name on a Windows toast; null
+  /// when the build has no such file (the toast then shows no icon).
+  static String? _windowsIconPath() {
+    if (kIsWeb || !Platform.isWindows) return null;
+    final dir = File(Platform.resolvedExecutable).parent.path;
+    final icon = File('$dir/data/flutter_assets/assets/tray/app_icon.png');
+    return icon.existsSync() ? icon.path : null;
   }
 }
