@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/dyno-nexsoft/WorkNexus/compare/v1.3.0...v1.4.0) (2026-10-09)
+
+
+### 🚀 Features
+
+* **update:** show the update dialog on launch with a clearer layout ([5239a88](https://github.com/dyno-nexsoft/WorkNexus/commit/5239a88d7a4c07d4f02dce583b4fdab068197a59))
+
 ## [1.3.0](https://github.com/dyno-nexsoft/WorkNexus/compare/v1.2.0...v1.3.0) (2026-10-09)
 
 
