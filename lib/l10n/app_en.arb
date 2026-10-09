@@ -731,5 +731,9 @@
   "appVersionLabel": "Version",
   "reportIssue": "Report an issue",
   "reportIssueHint": "Found a problem? Open a GitHub issue with your version filled in.",
-  "translationSection": "Translation"
+  "translationSection": "Translation",
+  "updateManualInstall": "Download this version from the release page.",
+  "translationApiCustom": "Custom (OpenAI-compatible)",
+  "translationApiBaseUrlHint": "https://api.example.com/v1",
+  "translationApiSaveFailed": "Couldn't save the translation key."
 }

@@ -17,6 +17,15 @@ class UpdateController extends Notifier<UpdateState> {
   /// quits and the new build starts.
   Future<void> installAndRestart(AvailableUpdate update) async {
     if (state is UpdateDownloading || state is UpdateInstalling) return;
+    try {
+      await _run(update);
+    } catch (error) {
+      // Whatever the repository did not map must still leave the busy state.
+      _fail('Update failed unexpectedly', error);
+    }
+  }
+
+  Future<void> _run(AvailableUpdate update) async {
     state = const UpdateDownloading(0);
     var shown = 0.0;
     final downloaded = await getIt<DownloadUpdate>()(

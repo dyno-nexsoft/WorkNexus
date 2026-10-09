@@ -24,7 +24,7 @@ class TranslationApiPreset {
 
   static const custom = TranslationApiPreset(
     id: 'custom',
-    name: 'Custom (OpenAI-compatible)',
+    name: 'Custom',
     baseUrl: '',
     defaultModel: '',
   );

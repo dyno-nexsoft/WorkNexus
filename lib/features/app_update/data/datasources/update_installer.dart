@@ -19,11 +19,13 @@ abstract class UpdateInstaller {
   /// [installPath] with [stagedPath] and starts the app again.
   Future<void> launchSwap(String stagedPath, {required String scriptDir});
 
-  /// Whether the folder holding the app can be changed by this user; it
-  /// cannot when the app was installed by an admin or runs translocated.
+  /// The folder the swap writes into: where the app bundle is moved within.
+  Directory get writableDirectory => Directory(installPath).parent;
+
+  /// Whether [writableDirectory] can be changed by this user; it cannot when
+  /// the app was installed by an admin or runs translocated.
   Future<bool> canReplace() async {
-    final parent = Directory(installPath).parent;
-    final probe = File('${parent.path}/.worknexus-update-probe');
+    final probe = File('${writableDirectory.path}/.worknexus-update-probe');
     try {
       await probe.writeAsString('');
       await probe.delete();

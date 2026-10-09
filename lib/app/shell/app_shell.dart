@@ -5,6 +5,7 @@ import '../../core/debug/talker_debug_overlay.dart';
 import '../../core/di/providers.dart';
 import '../../core/navigation/navigation_providers.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/quick_settings_side_panel.dart';
 import '../../features/app_update/presentation/widgets/update_notification_listener.dart';
 import '../../features/app_update/presentation/widgets/update_settings_card.dart';
@@ -16,6 +17,7 @@ import '../../features/chat/presentation/widgets/chat_notification_listener.dart
 import '../../features/chat/presentation/widgets/chat_notification_settings.dart';
 import '../../features/connections/presentation/settings_page.dart';
 import '../../features/task_detail/presentation/detail_panel.dart';
+import '../../features/translation/presentation/widgets/translation_settings_card.dart';
 import 'app_nav_rail.dart';
 import 'resizable_sidebar.dart';
 import 'title_bar.dart';
@@ -51,7 +53,17 @@ class AppShell extends ConsumerWidget {
                           const ResizableSidebar(),
                         Expanded(
                           child: integrationsVisible
-                              ? const SettingsPage(footer: UpdateSettingsCard())
+                              ? SettingsPage(
+                                  footer: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const TranslationSettingsCard(),
+                                      SizedBox(height: context.spacing.xl4),
+                                      const UpdateSettingsCard(),
+                                    ],
+                                  ),
+                                )
                               : chatOpen
                               ? const ChatPage()
                               : const BoardPage(),

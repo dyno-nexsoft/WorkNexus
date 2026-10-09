@@ -16,6 +16,9 @@ import '../providers/update_state.dart';
 /// Offers to download and install [update], then restarts into it. Without an
 /// in-app build for this platform, or when the install fails, it points at the
 /// release page instead.
+/// Widest the dialog grows, in logical pixels: a phone-sized card.
+const _dialogMaxWidth = 420.0;
+
 class UpdateDialog extends ConsumerWidget {
   const UpdateDialog({required this.update, super.key});
 
@@ -27,7 +30,8 @@ class UpdateDialog extends ConsumerWidget {
     final l = AppL10n.of(context);
     final state = ref.watch(updateControllerProvider);
     final busy = state is UpdateDownloading || state is UpdateInstalling;
-    final failed = state is UpdateFailed || !update.canInstallInApp;
+    final failed = state is UpdateFailed;
+    final manual = failed || !update.canInstallInApp;
 
     return Dialog(
       backgroundColor: c.surface,
@@ -35,7 +39,7 @@ class UpdateDialog extends ConsumerWidget {
         borderRadius: BorderRadius.circular(context.radii.lg),
       ),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 420),
+        constraints: const BoxConstraints(maxWidth: _dialogMaxWidth),
         child: Padding(
           padding: EdgeInsets.all(context.spacing.xl3),
           child: Column(
@@ -58,7 +62,11 @@ class UpdateDialog extends ConsumerWidget {
                 _Progress(state: state)
               else
                 Text(
-                  failed ? l.updateInstallFailed : l.updateRestartHint,
+                  failed
+                      ? l.updateInstallFailed
+                      : manual
+                      ? l.updateManualInstall
+                      : l.updateRestartHint,
                   textAlign: TextAlign.center,
                   style: context.typography.paragraph.copyWith(
                     color: failed ? c.error : c.textSecondary,
@@ -77,7 +85,7 @@ class UpdateDialog extends ConsumerWidget {
                   ),
                   SizedBox(width: context.spacing.lg),
                   Expanded(
-                    child: failed
+                    child: manual
                         ? AppButton.filled(
                             onPressed: () => openExternally(update.releaseUrl),
                             child: Text(l.updateOpenReleasePage),
@@ -107,14 +115,18 @@ class _AppBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     return Container(
-      width: 64,
-      height: 64,
+      width: context.spacing.xl6 + context.spacing.xl5,
+      height: context.spacing.xl6 + context.spacing.xl5,
       decoration: BoxDecoration(
         color: c.surfaceSubtle,
         borderRadius: BorderRadius.circular(context.radii.lg),
         border: Border.all(color: c.border),
       ),
-      child: Icon(PhosphorIconsLight.downloadSimple, size: 30, color: c.accent),
+      child: Icon(
+        PhosphorIconsLight.downloadSimple,
+        size: context.spacing.xl5,
+        color: c.accent,
+      ),
     );
   }
 }
@@ -137,7 +149,7 @@ class _VersionChange extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: context.spacing.md),
           child: Icon(
             PhosphorIconsLight.arrowRight,
-            size: 16,
+            size: context.spacing.xl3,
             color: c.textTertiary,
           ),
         ),
@@ -196,7 +208,7 @@ class _Progress extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(context.radii.xl),
           child: LinearProgressIndicator(
-            minHeight: 8,
+            minHeight: context.spacing.md,
             value: installing || progress == null || progress <= 0
                 ? null
                 : progress,

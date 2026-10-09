@@ -10,9 +10,10 @@ import 'package:work_nexus/features/app_update/data/repositories/github_update_r
 import 'package:work_nexus/features/app_update/domain/entities/available_update.dart';
 
 class _FakeInstaller extends UpdateInstaller {
-  _FakeInstaller({this.writable = true});
+  _FakeInstaller({this.writable = true, this.unpackError});
 
   final bool writable;
+  final Object? unpackError;
   String? swapped;
 
   @override
@@ -25,7 +26,10 @@ class _FakeInstaller extends UpdateInstaller {
   Future<bool> canReplace() async => writable;
 
   @override
-  Future<String> unpack(String zipPath, String directory) async => directory;
+  Future<String> unpack(String zipPath, String directory) async {
+    if (unpackError != null) throw unpackError!;
+    return directory;
+  }
 
   @override
   Future<void> launchSwap(
@@ -92,6 +96,16 @@ void main() {
 
     expect(result.failureOrNull, isA<ParseFailure>());
     expect(root.listSync(), isEmpty);
+  });
+
+  test('an unexpected error becomes a failure instead of escaping', () async {
+    final sha = sha256.convert('build'.codeUnits).toString();
+    final result = await repo(
+      _FakeInstaller(unpackError: StateError('boom')),
+      'build',
+    ).download(update(sha));
+
+    expect(result.failureOrNull, isA<UnexpectedFailure>());
   });
 
   test('an update with no verified build cannot be downloaded', () async {

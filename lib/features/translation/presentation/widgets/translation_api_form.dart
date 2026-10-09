@@ -9,10 +9,10 @@ import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/inline_status.dart';
 import '../../../../core/widgets/searchable_dropdown_field.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../translation/domain/entities/translation_api_config.dart';
-import '../../../translation/domain/value_objects/translation_api_preset.dart';
-import '../../../translation/presentation/translation_api_providers.dart';
-import 'connection_text_field.dart';
+import '../../domain/entities/translation_api_config.dart';
+import '../../domain/value_objects/translation_api_preset.dart';
+import '../translation_api_providers.dart';
+import '../../../../core/widgets/connection_text_field.dart';
 
 /// The form to translate with the user's own API key (Gemini, Groq,
 /// OpenRouter, a local Ollama or any OpenAI-compatible endpoint) instead of the
@@ -110,7 +110,9 @@ class _ApiFormState extends ConsumerState<_ApiForm> {
     if (!mounted) return;
     setState(() {
       _saving = false;
-      _error = result.failureOrNull?.message;
+      _error = result.isErr
+          ? AppL10n.of(context).translationApiSaveFailed
+          : null;
     });
   }
 
@@ -148,7 +150,9 @@ class _ApiFormState extends ConsumerState<_ApiForm> {
           value: _preset,
           searchHint: l.translationApiProvider,
           emptyLabel: l.noMatches,
-          labelOf: (p) => p.name,
+          labelOf: (p) => p == TranslationApiPreset.custom
+              ? l.translationApiCustom
+              : p.name,
           onChanged: _pick,
         ),
         SizedBox(height: context.spacing.lg),
@@ -156,7 +160,7 @@ class _ApiFormState extends ConsumerState<_ApiForm> {
           ConnectionTextField(
             label: l.translationApiBaseUrl,
             controller: _baseUrl,
-            hint: 'https://api.example.com/v1',
+            hint: l.translationApiBaseUrlHint,
             onChanged: (_) => setState(() {}),
           ),
           SizedBox(height: context.spacing.lg),

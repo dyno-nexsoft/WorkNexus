@@ -16,7 +16,13 @@ class TitleBar extends ConsumerWidget {
   const TitleBar({super.key, this.assignedCount});
 
   final int? assignedCount;
-  static const _windowsCaptionButtonsWidth = 46.0 * 3;
+
+  /// Windows' minimize / maximize / close buttons are 46px wide each.
+  static const _windowsCaptionButtonWidth = 46.0;
+  static const _windowsCaptionButtonsWidth = _windowsCaptionButtonWidth * 3;
+
+  /// Room macOS keeps for its traffic-light buttons.
+  static const _macTrafficLightsWidth = 60.0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -68,7 +74,7 @@ class TitleBar extends ConsumerWidget {
                         context.spacing.lg * 2 +
                         context.spacing.xl5 +
                         context.spacing.xs
-                  : 60.0,
+                  : _macTrafficLightsWidth,
             ),
           Expanded(
             child: DesktopWindowService.isDesktop

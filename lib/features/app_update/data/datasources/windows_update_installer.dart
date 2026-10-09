@@ -25,6 +25,10 @@ Start-Process -FilePath $Exe
   @override
   String get installPath => File(Platform.resolvedExecutable).parent.path;
 
+  /// robocopy writes into the app folder itself, not beside it.
+  @override
+  Directory get writableDirectory => Directory(installPath);
+
   @override
   Future<String> unpack(String zipPath, String directory) async {
     // tar (bsdtar) ships with Windows 10+ and reads zip archives.

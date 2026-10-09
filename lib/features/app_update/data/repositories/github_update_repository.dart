@@ -118,6 +118,8 @@ class GitHubUpdateRepository implements UpdateRepository {
     } on IOException catch (e) {
       // Includes a failed unpack (ProcessException).
       return Err(StorageFailure('Preparing the update failed', cause: e));
+    } catch (e) {
+      return Err(UnexpectedFailure('Downloading the update failed', cause: e));
     }
   }
 
@@ -130,7 +132,7 @@ class GitHubUpdateRepository implements UpdateRepository {
     if (!await installer.canReplace()) {
       return Err(
         StorageFailure(
-          'No write access to ${Directory(installer.installPath).parent.path}',
+          'No write access to ${installer.writableDirectory.path}',
         ),
       );
     }
@@ -141,6 +143,8 @@ class GitHubUpdateRepository implements UpdateRepository {
       );
     } on IOException catch (e) {
       return Err(StorageFailure('Starting the installer failed', cause: e));
+    } catch (e) {
+      return Err(UnexpectedFailure('Starting the installer failed', cause: e));
     }
     _quit();
     return const Ok(null);

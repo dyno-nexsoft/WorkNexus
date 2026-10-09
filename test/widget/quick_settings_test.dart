@@ -16,7 +16,7 @@ import 'package:work_nexus/core/theme/app_theme.dart';
 import 'package:work_nexus/core/theme/fonts.dart';
 import 'package:work_nexus/core/widgets/quick_settings_side_panel.dart';
 import 'package:work_nexus/features/connections/presentation/settings_page.dart';
-import 'package:work_nexus/features/connections/presentation/settings_providers.dart';
+import 'package:work_nexus/features/translation/presentation/translation_providers.dart';
 import 'package:work_nexus/l10n/app_localizations.dart';
 
 import '../support/di_test_harness.dart';

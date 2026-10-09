@@ -10,8 +10,8 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/util/translation_languages.dart';
 import '../../../../core/widgets/translation_language_control.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../translation/domain/value_objects/translation_api_preset.dart';
-import '../../../translation/presentation/translation_api_providers.dart';
+import '../../domain/value_objects/translation_api_preset.dart';
+import '../translation_api_providers.dart';
 import 'translation_api_form.dart';
 import 'translation_model_picker.dart';
 
@@ -39,7 +39,7 @@ class _TranslationSettingsCardState
     final saved = ref.watch(translationApiConfigProvider).asData?.value;
     final api = saved?.valueOrNull;
     final backend = api != null && api.isUsable
-        ? TranslationApiPreset.byId(api.presetId).name
+        ? _presetName(context, TranslationApiPreset.byId(api.presetId))
         : 'OpenCode';
     final summary = '${translationLanguageFor(lang).nativeName} · $backend';
 
@@ -71,6 +71,11 @@ class _TranslationSettingsCardState
     );
   }
 }
+
+String _presetName(BuildContext context, TranslationApiPreset preset) =>
+    preset == TranslationApiPreset.custom
+    ? AppL10n.of(context).translationApiCustom
+    : preset.name;
 
 class _Header extends StatelessWidget {
   const _Header({

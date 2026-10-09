@@ -678,5 +678,9 @@
   "appVersionLabel": "Phiên bản",
   "reportIssue": "Báo cáo vấn đề",
   "reportIssueHint": "Gặp lỗi? Mở issue trên GitHub, đã điền sẵn phiên bản của bạn.",
-  "translationSection": "Dịch thuật"
+  "translationSection": "Dịch thuật",
+  "updateManualInstall": "Hãy tải phiên bản này từ trang phát hành.",
+  "translationApiCustom": "Tuỳ chỉnh (tương thích OpenAI)",
+  "translationApiBaseUrlHint": "https://api.example.com/v1",
+  "translationApiSaveFailed": "Không lưu được key dịch."
 }

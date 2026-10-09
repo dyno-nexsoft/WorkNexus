@@ -19,6 +19,9 @@ class UpdateNotificationListener extends ConsumerWidget {
         if (!context.mounted) return;
         showDialog<void>(
           context: context,
+          // Closing it by a stray click mid-download would drop the controller
+          // while the install runs on.
+          barrierDismissible: false,
           builder: (_) => UpdateDialog(update: update),
         );
       });

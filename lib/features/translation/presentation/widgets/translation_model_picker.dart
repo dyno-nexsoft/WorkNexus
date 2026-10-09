@@ -6,7 +6,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/inline_status.dart';
 import '../../../../core/widgets/searchable_dropdown_field.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../settings_providers.dart';
+import '../translation_providers.dart';
 
 /// The model ticket translation runs on through OpenCode.
 ///
