@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://github.com/dyno-nexsoft/WorkNexus/compare/v1.2.0...v1.3.0) (2026-10-09)
+
+
+### 🚀 Features
+
+* **translation:** translate with your own API key (Gemini, Groq, OpenRouter, Ollama, custom) ([4bc6204](https://github.com/dyno-nexsoft/WorkNexus/commit/4bc62040ed2be4d76d877d2f1edc48f5bafd3489))
+
+
+### 🐛 Bug Fixes
+
+* **ci:** print release tags unquoted so older stable releases can be pruned ([0316566](https://github.com/dyno-nexsoft/WorkNexus/commit/0316566f468aed7a9d8cc5de22a32be277f94ead))
+* **notifications:** show the app icon and the sender's picture on Windows toasts ([cea3940](https://github.com/dyno-nexsoft/WorkNexus/commit/cea39404f16bacfcd3a36f2a17316b526b4fbe89))
+
 ## [1.2.0](https://github.com/dyno-nexsoft/WorkNexus/compare/v1.1.1...v1.2.0) (2026-10-09)
 
 
