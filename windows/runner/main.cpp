@@ -8,12 +8,11 @@
 namespace {
 
 constexpr wchar_t kSingleInstanceMutexName[] = L"Local\\WorkNexus";
-constexpr wchar_t kWindowClassName[] = L"FLUTTER_RUNNER_WIN32_WINDOW";
-constexpr wchar_t kWindowTitle[] = L"WorkNexus";
+constexpr wchar_t kWindowClassName[] = L"WORKNEXUS_RUNNER_WIN32_WINDOW";
 
 HWND FindMainWindow() {
   for (int attempt = 0; attempt < 50; ++attempt) {
-    HWND window = FindWindowW(kWindowClassName, kWindowTitle);
+    HWND window = FindWindowW(kWindowClassName, nullptr);
     if (window != nullptr) {
       return window;
     }

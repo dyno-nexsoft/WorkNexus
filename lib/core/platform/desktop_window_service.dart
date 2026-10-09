@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:window_manager/window_manager.dart';
 
+import '../config/app_config.dart';
+
 /// Thin seam over `window_manager` so the rest of the app never imports it
 /// directly (mobile/web builds can provide a no-op implementation).
 class DesktopWindowService {
   const DesktopWindowService();
 
-  static const appWindowTitle = 'WorkNexus';
+  static const appWindowTitle = AppConfig.appName;
 
   static bool get isDesktop =>
       Platform.isMacOS || Platform.isWindows || Platform.isLinux;

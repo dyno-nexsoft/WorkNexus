@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
 
+import '../../../../core/config/app_config.dart';
+
 class GitHubReleaseDatasource {
   GitHubReleaseDatasource(this._dio);
 
   static const _latestReleaseUrl =
-      'https://api.github.com/repos/dyno-nexsoft/WorkNexus/releases/latest';
+      'https://api.github.com/repos/${AppConfig.githubOwner}/${AppConfig.githubRepo}/releases/latest';
 
   final Dio _dio;
 
