@@ -34,8 +34,6 @@ jobs:
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
-          # Force the requested patch test release once; remove after v1.1.1 publishes.
-          release-as: "1.1.1"
 
   # ───────────────────────────── macOS ─────────────────────────────
   build-macos:
