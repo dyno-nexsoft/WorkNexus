@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.6.0](https://github.com/dyno-nexsoft/WorkNexus/compare/v1.5.0...v1.6.0) (2026-10-09)
+
+
+### 🚀 Features
+
+* **desktop:** update profile and icon app windows ([cd8ac39](https://github.com/dyno-nexsoft/WorkNexus/commit/cd8ac39e3c17424a41345806f6b6895d608154e3))
+* **desktop:** update profile info ([66139e2](https://github.com/dyno-nexsoft/WorkNexus/commit/66139e22bb11a4eebc0d5add8dd4a98bf7ee5d25))
+
+
+### 🐛 Bug Fixes
+
+* **update:** address review findings on the updater and translation settings ([d815c7b](https://github.com/dyno-nexsoft/WorkNexus/commit/d815c7bc98a7ee9a1b47c9f5bb73140740f755c6))
+
 ## [1.5.0](https://github.com/dyno-nexsoft/WorkNexus/compare/v1.4.1...v1.5.0) (2026-10-09)
 
 
