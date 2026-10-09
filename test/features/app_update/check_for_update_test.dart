@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:work_nexus/core/error/result.dart';
 import 'package:work_nexus/core/theme/app_palette.dart';
 import 'package:work_nexus/core/theme/app_theme.dart';
+import 'package:work_nexus/features/app_update/domain/entities/available_update.dart';
 import 'package:work_nexus/features/app_update/domain/repositories/update_repository.dart';
 import 'package:work_nexus/features/app_update/domain/usecases/check_for_update.dart';
 import 'package:work_nexus/features/app_update/presentation/providers/update_provider.dart';
@@ -20,11 +21,13 @@ void main() {
       ProviderScope(
         overrides: [
           updateCheckProvider.overrideWith(
-            (ref) async => const Ok((
-              currentVersion: '1.0.0',
-              latestVersion: 'v1.1.0',
-              releaseUrl: 'https://github.com/dyno-nexsoft/WorkNexus/releases',
-            )),
+            (ref) async => const Ok(
+              AvailableUpdate(
+                currentVersion: '1.0.0',
+                latestVersion: 'v1.1.0',
+                releaseUrl: 'https://github.com/example/WorkNexus/releases',
+              ),
+            ),
           ),
         ],
         child: const MaterialApp(
@@ -83,7 +86,9 @@ void main() {
           Ok((
             currentVersion: '1.0.9',
             latestVersion: 'v1.1.0',
-            releaseUrl: 'https://github.com/dyno-nexsoft/WorkNexus/releases',
+            releaseUrl: 'https://github.com/example/WorkNexus/releases',
+            downloadUrl: null,
+            sha256: null,
           )),
         ),
       );
@@ -101,7 +106,9 @@ void main() {
             Ok((
               currentVersion: '1.2.0',
               latestVersion: 'v1.2.0',
-              releaseUrl: 'https://github.com/dyno-nexsoft/WorkNexus/releases',
+              releaseUrl: 'https://github.com/example/WorkNexus/releases',
+              downloadUrl: null,
+              sha256: null,
             )),
           ),
         )();
@@ -110,7 +117,9 @@ void main() {
             Ok((
               currentVersion: '2.0.0',
               latestVersion: 'v1.9.9',
-              releaseUrl: 'https://github.com/dyno-nexsoft/WorkNexus/releases',
+              releaseUrl: 'https://github.com/example/WorkNexus/releases',
+              downloadUrl: null,
+              sha256: null,
             )),
           ),
         )();
@@ -126,7 +135,9 @@ void main() {
           Ok((
             currentVersion: '1.2.0-rc.1',
             latestVersion: 'v1.2.0',
-            releaseUrl: 'https://github.com/dyno-nexsoft/WorkNexus/releases',
+            releaseUrl: 'https://github.com/example/WorkNexus/releases',
+            downloadUrl: null,
+            sha256: null,
           )),
         ),
       )();
@@ -145,7 +156,9 @@ void main() {
             Ok((
               currentVersion: '1.0.0',
               latestVersion: 'v1.1.0-alpha.1',
-              releaseUrl: 'https://github.com/dyno-nexsoft/WorkNexus/releases',
+              releaseUrl: 'https://github.com/example/WorkNexus/releases',
+              downloadUrl: null,
+              sha256: null,
             )),
           ),
         )();
@@ -161,7 +174,9 @@ void main() {
           Ok((
             currentVersion: '1.0',
             latestVersion: 'v1.1.0',
-            releaseUrl: 'https://github.com/dyno-nexsoft/WorkNexus/releases',
+            releaseUrl: 'https://github.com/example/WorkNexus/releases',
+            downloadUrl: null,
+            sha256: null,
           )),
         ),
       )();
@@ -179,4 +194,13 @@ class _FakeUpdateRepository implements UpdateRepository {
   @override
   Future<Result<UpdateVersionSnapshot?>> fetchLatestStableRelease() async =>
       result;
+
+  @override
+  Future<Result<String>> download(
+    AvailableUpdate update, {
+    void Function(double progress)? onProgress,
+  }) async => const Ok('/staged');
+
+  @override
+  Future<Result<void>> install(String stagedPath) async => const Ok(null);
 }

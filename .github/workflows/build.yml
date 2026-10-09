@@ -64,6 +64,15 @@ jobs:
 
       # Release build. No Apple cert on CI: the project defaults to ad-hoc
       # (CODE_SIGN_IDENTITY = "-"), so the .app is ad-hoc signed, no secret needed.
+      # Owner/repo come from the repository this workflow runs in, so a fork
+      # and upstream each build an app that updates from their own releases.
+      - name: Point the build at this repository
+        shell: bash
+        run: |
+          sed -i.bak -e "s|^GITHUB_OWNER=.*|GITHUB_OWNER=${{ github.repository_owner }}|" .env
+          sed -i.bak -e "s|^GITHUB_REPO=.*|GITHUB_REPO=${{ github.event.repository.name }}|" .env
+          rm -f .env.bak
+
       - name: Build macOS (release, ad-hoc signed)
         run: flutter build macos --release --dart-define-from-file=.env
 
@@ -112,6 +121,15 @@ jobs:
       - name: Run code generation
         run: dart run build_runner build --delete-conflicting-outputs
 
+      # Owner/repo come from the repository this workflow runs in, so a fork
+      # and upstream each build an app that updates from their own releases.
+      - name: Point the build at this repository
+        shell: bash
+        run: |
+          sed -i.bak -e "s|^GITHUB_OWNER=.*|GITHUB_OWNER=${{ github.repository_owner }}|" .env
+          sed -i.bak -e "s|^GITHUB_REPO=.*|GITHUB_REPO=${{ github.event.repository.name }}|" .env
+          rm -f .env.bak
+
       - name: Build Windows (release)
         run: flutter build windows --release --dart-define-from-file=.env
 
@@ -146,12 +164,17 @@ jobs:
           path: dist
           merge-multiple: true
 
+      # The in-app updater refuses a download whose hash is not listed here.
+      - name: Write checksums
+        working-directory: dist
+        run: sha256sum *.zip > SHA256SUMS.txt
+
       # Attach the binaries to the versioned release created by Release Please.
       - name: Attach assets to versioned release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release upload "${{ needs.release-please.outputs.tag_name }}" dist/*.zip \
+          gh release upload "${{ needs.release-please.outputs.tag_name }}" dist/*.zip dist/SHA256SUMS.txt \
             --repo "$GITHUB_REPOSITORY" --clobber
 
       # Retain only the newest published stable release.

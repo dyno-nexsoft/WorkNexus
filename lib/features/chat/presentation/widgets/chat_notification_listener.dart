@@ -13,6 +13,7 @@ import '../../domain/entities/chat_message.dart';
 import '../../domain/entities/chat_user.dart';
 import '../providers/chat_providers.dart';
 import 'chat_labels.dart';
+import 'chat_panels.dart';
 
 /// Raises a desktop notification for each new message the user is not
 /// already looking at; clicking one brings the window up on that chat.
@@ -65,11 +66,13 @@ class _ChatNotificationListenerState
     final shownGid = ref.read(chatOpenProvider) && shownAccount != null
         ? ref.read(selectedChatGidProvider(shownAccount))
         : null;
+    final settings = ref.read(appSettingsProvider);
     final notify = ref
         .read(chatControllerProvider)
         .shouldNotify(
           message,
-          enabled: ref.read(appSettingsProvider).chatNotifications,
+          enabled: settings.chatNotifications,
+          whileViewing: settings.chatNotifyWhileViewing,
           appFocused: focused,
           visibleChat: shownAccount != null && shownGid != null
               ? (accountId: shownAccount, chatGid: shownGid)
@@ -95,7 +98,11 @@ class _ChatNotificationListenerState
           id: Object.hash(accountId, message.chatGid) & 0x7fffffff,
           title: chat == null ? sender : chatTitle(context, chat, users),
           body: direct ? preview : '$sender: $preview',
-          payload: jsonEncode({'a': accountId, 'c': message.chatGid}),
+          payload: jsonEncode({
+            'a': accountId,
+            'c': message.chatGid,
+            'm': ?message.serverId,
+          }),
         );
   }
 
@@ -112,6 +119,13 @@ class _ChatNotificationListenerState
       showChatView(ref);
       ref.read(pickedChatAccountProvider.notifier).state = accountId;
       ref.read(selectedChatGidProvider(accountId).notifier).state = gid;
+      // The tapped message, found (loading older pages if need be) and
+      // highlighted once the chat shows.
+      final serverId = decoded['m'];
+      appTalker.info('Notifications: tapped $gid, message $serverId');
+      if (serverId is int) {
+        jumpToChatMessage(ref, (accountId: accountId, chatGid: gid), serverId);
+      }
     }
   }
 

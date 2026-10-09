@@ -40,6 +40,9 @@ const double kSidebarWidthDefault = 290.0;
 /// [AppSettings.chatWallpaper] values: the plain app background (also what
 /// an empty value — the pre-pattern-default setting — means) and the doodle
 /// pattern (the default); anything else is the path of an image.
+/// The chat text sizes offered: small, default, large, extra large.
+const List<double> kChatTextScales = [0.9, 1.0, 1.15, 1.3];
+
 const kChatWallpaperPlain = 'none';
 const kChatWallpaperPattern = 'pattern';
 
@@ -67,9 +70,11 @@ class AppSettings {
     this.chatWallpaperDim = 0.2,
     this.chatSendMarkdown = false,
     this.chatNotifications = true,
+    this.chatNotifyWhileViewing = false,
     this.chatCacheLimitMb = 2048,
     this.chatAutoDownloadVideos = true,
     this.chatAutoDownloadVideoMb = 20,
+    this.chatTextScale = 1.0,
   });
 
   final AppThemeVariant variant;
@@ -137,6 +142,9 @@ class AppSettings {
   /// Show a desktop notification for new chat messages.
   final bool chatNotifications;
 
+  /// Notify even for the chat already open in the focused window.
+  final bool chatNotifyWhileViewing;
+
   /// Most disk space downloaded chat attachments may use, in MB.
   final int chatCacheLimitMb;
 
@@ -145,6 +153,10 @@ class AppSettings {
   /// when off) wait for a click.
   final bool chatAutoDownloadVideos;
   final int chatAutoDownloadVideoMb;
+
+  /// How much the chat's text is scaled — messages, composer, threads
+  /// (1.0: as designed). See [kChatTextScales].
+  final double chatTextScale;
 
   AppSettings copyWith({
     AppThemeVariant? variant,
@@ -167,9 +179,11 @@ class AppSettings {
     double? chatWallpaperDim,
     bool? chatSendMarkdown,
     bool? chatNotifications,
+    bool? chatNotifyWhileViewing,
     int? chatCacheLimitMb,
     bool? chatAutoDownloadVideos,
     int? chatAutoDownloadVideoMb,
+    double? chatTextScale,
     // Sentinel so `null` can be passed explicitly to reset to the theme accent.
     Object? accentColorValue = _unset,
   }) {
@@ -194,11 +208,14 @@ class AppSettings {
       chatWallpaperDim: chatWallpaperDim ?? this.chatWallpaperDim,
       chatSendMarkdown: chatSendMarkdown ?? this.chatSendMarkdown,
       chatNotifications: chatNotifications ?? this.chatNotifications,
+      chatNotifyWhileViewing:
+          chatNotifyWhileViewing ?? this.chatNotifyWhileViewing,
       chatCacheLimitMb: chatCacheLimitMb ?? this.chatCacheLimitMb,
       chatAutoDownloadVideos:
           chatAutoDownloadVideos ?? this.chatAutoDownloadVideos,
       chatAutoDownloadVideoMb:
           chatAutoDownloadVideoMb ?? this.chatAutoDownloadVideoMb,
+      chatTextScale: chatTextScale ?? this.chatTextScale,
       accentColorValue: identical(accentColorValue, _unset)
           ? this.accentColorValue
           : accentColorValue as int?,
@@ -278,12 +295,16 @@ class AppSettingsController extends Notifier<AppSettings> {
       _set(state.copyWith(chatSendMarkdown: on));
   void setChatNotifications(bool on) =>
       _set(state.copyWith(chatNotifications: on));
+  void setChatNotifyWhileViewing(bool on) =>
+      _set(state.copyWith(chatNotifyWhileViewing: on));
   void setChatCacheLimitMb(int mb) =>
       _set(state.copyWith(chatCacheLimitMb: mb));
   void setChatAutoDownloadVideos(bool on) =>
       _set(state.copyWith(chatAutoDownloadVideos: on));
   void setChatAutoDownloadVideoMb(int mb) =>
       _set(state.copyWith(chatAutoDownloadVideoMb: mb));
+  void setChatTextScale(double scale) =>
+      _set(state.copyWith(chatTextScale: scale));
   void setComponentRadius(double r) =>
       _set(state.copyWith(componentRadius: snapComponentRadius(r)));
 

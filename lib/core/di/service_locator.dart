@@ -17,9 +17,13 @@ import '../../features/agents/data/datasources/opencode_cli_runner.dart';
 import '../../features/agents/data/in_memory_agent_session_repository.dart';
 import '../../features/agents/data/repositories/opencode_auth_file_repository.dart';
 import '../../features/app_update/data/datasources/github_release_datasource.dart';
+import '../../features/app_update/data/datasources/macos_update_installer.dart';
+import '../../features/app_update/data/datasources/windows_update_installer.dart';
 import '../../features/app_update/data/repositories/github_update_repository.dart';
 import '../../features/app_update/domain/repositories/update_repository.dart';
 import '../../features/app_update/domain/usecases/check_for_update.dart';
+import '../../features/app_update/domain/usecases/download_update.dart';
+import '../../features/app_update/domain/usecases/install_update.dart';
 import '../../features/board/data/repositories/local_saved_filter_repository.dart';
 import '../../features/board/domain/repositories/saved_filter_repository.dart';
 import '../../features/chat/data/datasources/chat_local_datasource.dart';
@@ -43,6 +47,7 @@ import '../../features/sync/data/sync_service.dart';
 import '../../features/translation/data/opencode_translation_service.dart';
 import '../../features/translation/data/repositories/local_translation_repository.dart';
 import '../../features/translation/domain/adapters/translation_service.dart';
+import '../config/app_config.dart';
 import '../database/database.dart';
 import '../debug/app_talker.dart';
 import '../domain/adapters/github_pr_service.dart';
@@ -95,11 +100,29 @@ abstract class ServiceModule {
   @lazySingleton
   UpdateRepository updateRepository(
     GitHubReleaseDatasource releaseDatasource,
-  ) => GitHubUpdateRepository(releaseDatasource);
+  ) => GitHubUpdateRepository(
+    releases: releaseDatasource,
+    installer: Platform.isWindows
+        ? const WindowsUpdateInstaller()
+        : Platform.isMacOS
+        ? const MacosUpdateInstaller()
+        : null,
+    stagingRoot: () async => Directory(
+      '${(await getTemporaryDirectory()).path}/${AppConfig.databaseName}-update',
+    ),
+  );
 
   @lazySingleton
   CheckForUpdate checkForUpdate(UpdateRepository repository) =>
       CheckForUpdate(repository);
+
+  @lazySingleton
+  DownloadUpdate downloadUpdate(UpdateRepository repository) =>
+      DownloadUpdate(repository);
+
+  @lazySingleton
+  InstallUpdate installUpdate(UpdateRepository repository) =>
+      InstallUpdate(repository);
 
   @prod
   @lazySingleton

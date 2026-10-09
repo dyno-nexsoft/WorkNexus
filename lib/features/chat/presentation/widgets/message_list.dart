@@ -13,7 +13,6 @@ import '../providers/chat_controller.dart';
 import '../providers/chat_providers.dart';
 import 'chat_snack.dart';
 import 'chat_style.dart';
-import 'chat_wallpaper.dart';
 import 'list_extent_estimate.dart';
 import 'message_jump.dart';
 import 'message_list_header.dart';
@@ -172,8 +171,10 @@ class _MessageListState extends ConsumerState<MessageList> {
   /// Scrolls to message [serverId] (loading older pages) and highlights it.
   Future<void> _jumpTo(int serverId) async {
     final t = widget.thread;
+    await ref.read(chatMessagesProvider(t).future); // A chat just opened.
     ChatMessage? target;
     for (var page = 0; target == null; page++) {
+      if (!mounted || widget.thread != t) return;
       final shown = ref.read(chatMessagesProvider(t)).value ?? const [];
       target = shown.where((m) => m.serverId == serverId).firstOrNull;
       if (target != null) break;
@@ -183,7 +184,6 @@ class _MessageListState extends ConsumerState<MessageList> {
       }
       if (!_loadingOlder) await _loadOlder();
       await WidgetsBinding.instance.endOfFrame;
-      if (!mounted || widget.thread != t) return;
     }
     final found = await _jump.reveal(
       _scroll,
@@ -238,9 +238,13 @@ class _MessageListState extends ConsumerState<MessageList> {
       (previous, next) =>
           _onMessages(previous?.value ?? const [], next.value ?? const []),
     );
-    ref.listen(chatJumpRequestProvider(t), (_, id) {
-      if (id != null) _jumpTo(id);
-    });
+    // A jump asked for while shown, or before the list existed (tapping a
+    // notification opens the chat first): taken once, after this frame.
+    if (ref.watch(chatJumpRequestProvider(t)) != null) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => MessageJump.take(chatJumpRequestProvider(t), ref, _jumpTo),
+      );
+    }
     // Kept alive for [_onMessages], which reads it.
     ref.watch(chatSelfUserIdProvider(t.accountId));
     final messagesAsync = ref.watch(chatMessagesProvider(t));
@@ -278,21 +282,19 @@ class _MessageListState extends ConsumerState<MessageList> {
       onMouseUp: _onMouseUp,
     );
     final s = context.spacing;
-    return ChatBackground(
-      child: Stack(
-        children: [
-          list,
-          Positioned(
-            right: s.xl5,
-            bottom: s.xl3,
-            child: ScrollToLatestButton(
-              visible: _away,
-              unseen: _unseen,
-              onPressed: _scrollToLatest,
-            ),
+    return Stack(
+      children: [
+        list,
+        Positioned(
+          right: s.xl5,
+          bottom: s.xl3,
+          child: ScrollToLatestButton(
+            visible: _away,
+            unseen: _unseen,
+            onPressed: _scrollToLatest,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

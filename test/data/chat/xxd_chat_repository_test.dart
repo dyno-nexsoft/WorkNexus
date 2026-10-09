@@ -220,7 +220,7 @@ void main() {
     );
     expect(
       byGid(chat, 'g1')!.lastMessage?.content,
-      const MessageContent.text('new'),
+      const MessageContent.text('new', markdown: true),
     );
     final messages = await repo.watchMessages(_acc, 'g1').first;
     expect(messages.last.gid, 'm101');
@@ -397,6 +397,39 @@ void main() {
     await eventually(
       repo.watchConversations(_acc),
       (l) => !byGid(l, last)!.starred,
+    );
+  });
+
+  test('role names come from sysgetdepts, asked once', () async {
+    server.onRequest = (req) => req['method'] == 'sysgetdepts'
+        ? {
+            'method': 'sysgetdepts',
+            'rid': req['rid'],
+            'result': 'success',
+            // As xxd 9 replies: departments and roles inside `data`, the
+            // reply's own `roles` empty.
+            'data': {
+              'depts': {
+                '1': {'name': 'Mobile'},
+              },
+              'roles': {'dev': '研发', 'op': 'Operations', 'x': ''},
+            },
+            'roles': '',
+          }
+        : null;
+    await repo.connect(_acc);
+    await eventually(repo.watchConversations(_acc), (l) => l.length == 2);
+
+    final names = await repo.roleNames(_acc);
+    expect(names, isA<Ok<Map<String, String>>>());
+    expect((names as Ok<Map<String, String>>).value, {
+      'dev': '研发',
+      'op': 'Operations',
+    });
+    await repo.roleNames(_acc);
+    expect(
+      server.requests.where((r) => r['method'] == 'sysgetdepts'),
+      hasLength(1),
     );
   });
 

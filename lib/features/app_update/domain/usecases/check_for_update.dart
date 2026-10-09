@@ -1,12 +1,7 @@
 import '../../../../core/error/failure.dart';
 import '../../../../core/error/result.dart';
+import '../entities/available_update.dart';
 import '../repositories/update_repository.dart';
-
-typedef AvailableUpdate = ({
-  String currentVersion,
-  String latestVersion,
-  String releaseUrl,
-});
 
 class CheckForUpdate {
   const CheckForUpdate(this._repository);
@@ -32,11 +27,15 @@ class CheckForUpdate {
       if (latest.isPrerelease) return const Ok(null);
       if (latest.compareTo(current) <= 0) return const Ok(null);
 
-      return Ok((
-        currentVersion: snapshot.currentVersion,
-        latestVersion: snapshot.latestVersion,
-        releaseUrl: snapshot.releaseUrl,
-      ));
+      return Ok(
+        AvailableUpdate(
+          currentVersion: snapshot.currentVersion,
+          latestVersion: snapshot.latestVersion,
+          releaseUrl: snapshot.releaseUrl,
+          downloadUrl: snapshot.downloadUrl,
+          sha256: snapshot.sha256,
+        ),
+      );
     }, Err<AvailableUpdate?>.new);
   }
 }

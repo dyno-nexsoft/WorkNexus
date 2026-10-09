@@ -32,7 +32,9 @@ class DesktopNotifier {
 
   Future<bool> _initialize() async {
     if (kIsWeb ||
-        !(Platform.isMacOS || Platform.isWindows || Platform.isLinux)) {
+        !(defaultTargetPlatform == TargetPlatform.macOS ||
+            defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.linux)) {
       return false;
     }
     try {
@@ -53,7 +55,7 @@ class DesktopNotifier {
       );
       appTalker.info('Notifications: initialize -> $ok');
       return ok ?? false;
-    } on Exception catch (e, st) {
+    } catch (e, st) {
       appTalker.handle(e, st, 'Notifications: initialize failed');
       return false;
     }

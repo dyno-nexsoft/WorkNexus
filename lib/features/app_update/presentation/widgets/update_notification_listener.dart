@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/platform/open_external.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../providers/update_provider.dart';
+import 'update_dialog.dart';
 
 class UpdateNotificationListener extends ConsumerWidget {
   const UpdateNotificationListener({required this.child, super.key});
@@ -26,8 +26,11 @@ class UpdateNotificationListener extends ConsumerWidget {
               content: Text(l10n.updateAvailable(update.latestVersion)),
               duration: const Duration(seconds: 12),
               action: SnackBarAction(
-                label: l10n.download,
-                onPressed: () => openExternally(update.releaseUrl),
+                label: l10n.updateAction,
+                onPressed: () => showDialog<void>(
+                  context: context,
+                  builder: (_) => UpdateDialog(update: update),
+                ),
               ),
             ),
           );

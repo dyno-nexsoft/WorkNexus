@@ -1,6 +1,17 @@
+import 'dart:io';
+
+import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 
 import '../../../../core/config/app_config.dart';
+
+typedef GitHubRelease = ({
+  String tagName,
+  String htmlUrl,
+
+  /// Asset name → browser download URL.
+  Map<String, String> assets,
+});
 
 class GitHubReleaseDatasource {
   GitHubReleaseDatasource(this._dio);
@@ -10,14 +21,14 @@ class GitHubReleaseDatasource {
 
   final Dio _dio;
 
-  Future<({String tagName, String htmlUrl})?> fetchLatestStableRelease() async {
+  Future<GitHubRelease?> fetchLatestStableRelease() async {
     final response = await _dio.get<Object?>(
       _latestReleaseUrl,
       options: Options(
         headers: const {
           'Accept': 'application/vnd.github+json',
           'X-GitHub-Api-Version': '2022-11-28',
-          'User-Agent': 'WorkNexus',
+          'User-Agent': AppConfig.appName,
         },
       ),
     );
@@ -34,6 +45,43 @@ class GitHubReleaseDatasource {
         body['prerelease'] != false) {
       throw const FormatException('GitHub did not return a stable release');
     }
-    return (tagName: tagName, htmlUrl: htmlUrl);
+    final assets = <String, String>{};
+    if (body['assets'] case final List<Object?> list) {
+      for (final asset in list) {
+        if (asset is! Map<String, dynamic>) continue;
+        final name = asset['name'];
+        final url = asset['browser_download_url'];
+        if (name is String && url is String) assets[name] = url;
+      }
+    }
+    return (tagName: tagName, htmlUrl: htmlUrl, assets: assets);
   }
+
+  Future<String> readText(String url) async {
+    final response = await _dio.get<String>(
+      url,
+      options: Options(responseType: ResponseType.plain),
+    );
+    return response.data ?? '';
+  }
+
+  /// Streams [url] to [path]; the long timeout is the download's, not the
+  /// API's.
+  Future<void> downloadFile(
+    String url,
+    String path, {
+    void Function(double progress)? onProgress,
+  }) async {
+    await _dio.download(
+      url,
+      path,
+      options: Options(receiveTimeout: const Duration(minutes: 10)),
+      onReceiveProgress: (received, total) {
+        if (total > 0) onProgress?.call(received / total);
+      },
+    );
+  }
+
+  Future<String> sha256Of(String path) async =>
+      (await sha256.bind(File(path).openRead()).first).toString();
 }

@@ -13,6 +13,11 @@ import '../../domain/value_objects/chat_role.dart';
 import '../../domain/value_objects/message_content.dart';
 import 'chat_avatar.dart';
 
+// Moved to the domain (storage counts videos too); kept reachable here for
+// the widgets that already import labels.
+export '../../domain/value_objects/chat_media_kind.dart'
+    show isVideoFile, isVideoName;
+
 /// `[@Display Name](@#userId)` — how xxd encodes a mention inside text.
 final chatMentionPattern = RegExp(r'\[@([^\]]+)\]\(@#(\d+)\)');
 
@@ -77,6 +82,8 @@ String chatUserName(BuildContext context, Map<int, ChatUser> users, int id) {
 /// One-line preview of a message for the chat list.
 String chatPreview(BuildContext context, ChatMessage message) {
   final l = AppL10n.of(context);
+  // A retracted message keeps no content; say so rather than show nothing.
+  if (message.deleted) return l.chatRetracted;
   return switch (message.content) {
     TextContent(:final text, :final markdown) =>
       (markdown ? _stripMarkdown(text) : text)
@@ -105,14 +112,6 @@ String chatInitials(String name) {
   final joined = letters.join();
   return joined.isEmpty ? '?' : joined;
 }
-
-const _videoExtensions = {'mp4', 'mov', 'm4v', 'webm', 'mkv', 'avi'};
-
-/// Whether a file message holds a video the in-app player can try.
-bool isVideoFile(FileContent file) =>
-    (file.mimeType?.startsWith('video/') ?? false) || isVideoName(file.name);
-
-bool isVideoName(String name) => _videoExtensions.contains(_extension(name));
 
 /// Whether a file to send is an image (gets a thumbnail in the preview).
 bool isImageAttachment(String name) => const {
@@ -250,8 +249,26 @@ ChatPresence? chatPresenceOf(Map<int, ChatUser> users, int? id) {
   return status == null ? null : ChatPresence.fromStatus(status);
 }
 
-/// A ZenTao role's official name; an admin-defined code stays as it is.
-String chatRoleLabel(BuildContext context, String role) {
+/// Names for role codes admins often add beyond ZenTao's defaults, which
+/// the server sends no name for.
+String? _extraRoleName(AppL10n l, String code) => switch (code.toLowerCase()) {
+  'ui' || 'designer' => l.chatRoleUi,
+  'ux' => l.chatRoleUx,
+  'op' || 'ops' => l.chatRoleOp,
+  'opm' => l.chatRoleOpm,
+  'ba' => l.chatRoleBa,
+  'devops' => l.chatRoleDevops,
+  _ => null,
+};
+
+/// A ZenTao role's official name. A role an admin added takes a name of ours
+/// for common codes (`ui` → Designer), else the server's ([serverNames],
+/// code → name), else stays as its code.
+String chatRoleLabel(
+  BuildContext context,
+  String role, {
+  Map<String, String> serverNames = const {},
+}) {
   final l = AppL10n.of(context);
   return switch (ChatRole.fromCode(role)) {
     ChatRole.dev => l.chatRoleDev,
@@ -263,7 +280,7 @@ String chatRoleLabel(BuildContext context, String role) {
     ChatRole.qd => l.chatRoleQd,
     ChatRole.top => l.chatRoleTop,
     ChatRole.others => l.chatRoleOthers,
-    null => role,
+    null => _extraRoleName(l, role.trim()) ?? serverNames[role.trim()] ?? role,
   };
 }
 
@@ -275,8 +292,8 @@ ChatVerifiedBadge? chatVerifiedBadge(
   Map<int, ChatUser> users,
   int? id,
 ) {
-  final role = ChatRole.fromCode(users[id]?.role);
-  final rank = role?.rank;
+  final role = users[id]?.role?.trim();
+  final rank = chatRoleRankOf(role);
   if (role == null || rank == null) return null;
   return (color: chatRankColor(context, rank), role: role);
 }

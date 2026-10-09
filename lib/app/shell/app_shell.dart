@@ -13,6 +13,7 @@ import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../features/chat/presentation/widgets/chat_appearance_settings.dart';
 import '../../features/chat/presentation/widgets/chat_auto_download_settings.dart';
 import '../../features/chat/presentation/widgets/chat_notification_listener.dart';
+import '../../features/chat/presentation/widgets/chat_notification_settings.dart';
 import '../../features/connections/presentation/settings_page.dart';
 import '../../features/task_detail/presentation/detail_panel.dart';
 import 'app_nav_rail.dart';
@@ -50,9 +51,7 @@ class AppShell extends ConsumerWidget {
                           const ResizableSidebar(),
                         Expanded(
                           child: integrationsVisible
-                              ? const SettingsPage(
-                                  footer: UpdateSettingsCard(),
-                                )
+                              ? const SettingsPage(footer: UpdateSettingsCard())
                               : chatOpen
                               ? const ChatPage()
                               : const BoardPage(),
@@ -64,6 +63,7 @@ class AppShell extends ConsumerWidget {
                       sections: [
                         ChatAppearanceSettings(),
                         ChatAutoDownloadSettings(),
+                        ChatNotificationSettings(),
                       ],
                     ),
                     const TalkerDebugOverlay(),

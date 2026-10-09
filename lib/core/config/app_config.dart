@@ -24,7 +24,7 @@ abstract final class AppConfig {
   /// checker to construct the Releases API URL.
   static const githubOwner = String.fromEnvironment(
     'GITHUB_OWNER',
-    defaultValue: 'dyno-nexsoft',
+    defaultValue: 'thanhnguyen293',
   );
 
   /// GitHub repository name, paired with [githubOwner] for the Releases API.
@@ -58,5 +58,24 @@ abstract final class AppConfig {
   static const databaseName = String.fromEnvironment(
     'DB_NAME',
     defaultValue: 'worknexus',
+  );
+
+  /// Release asset holding the Windows build (zip of the Release folder).
+  static const updateAssetWindows = String.fromEnvironment(
+    'UPDATE_ASSET_WINDOWS',
+    defaultValue: 'worknexus-windows.zip',
+  );
+
+  /// Release asset holding the macOS build (zipped `.app`).
+  static const updateAssetMacos = String.fromEnvironment(
+    'UPDATE_ASSET_MACOS',
+    defaultValue: 'work_nexus-macos.zip',
+  );
+
+  /// Release asset listing `sha256  filename` lines the updater verifies
+  /// a download against.
+  static const updateChecksumsAsset = String.fromEnvironment(
+    'UPDATE_CHECKSUMS_ASSET',
+    defaultValue: 'SHA256SUMS.txt',
   );
 }
