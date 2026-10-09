@@ -35,8 +35,8 @@ jobs:
   # prerelease; previous stable tags remain available as source history.
   prune-stable-releases:
     name: Keep latest stable release
-    needs: release-please
-    if: needs.release-please.result == 'success'
+    needs: [release-please, build-release]
+    if: ${{ always() && needs.release-please.result == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
