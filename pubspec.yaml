@@ -94,6 +94,7 @@ dependencies:
   fvp: 0.39.0
   # Desktop notifications for new chat messages (macOS, Windows, Linux).
   flutter_local_notifications: 22.3.1
+  package_info_plus: 9.0.1
 
 dev_dependencies:
   flutter_test:

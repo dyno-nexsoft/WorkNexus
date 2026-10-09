@@ -1,6 +1,14 @@
 {
   "@@locale": "en",
   "appTitle": "Unified Task Board",
+  "updateAvailable": "WorkNexus {version} is available.",
+  "@updateAvailable": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
   "board": "Board",
   "list": "List",
   "integrations": "Integrations",

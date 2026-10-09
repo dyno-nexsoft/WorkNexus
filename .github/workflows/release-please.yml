@@ -31,6 +31,35 @@ jobs:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
+  # Keep exactly one published stable release. Nightly is marked as a
+  # prerelease; previous stable tags remain available as source history.
+  prune-stable-releases:
+    name: Keep latest stable release
+    needs: release-please
+    if: needs.release-please.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Delete older stable releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          stable_tags="$(gh api --paginate --slurp \
+            "repos/${GITHUB_REPOSITORY}/releases" \
+            --jq 'add | map(select(.draft == false and .prerelease == false)) | sort_by(.published_at) | reverse | map(.tag_name) | .[]')"
+          latest_tag="$(printf '%s\n' "$stable_tags" | sed -n '1p')"
+          if [[ -z "$latest_tag" ]]; then
+            echo "No published stable release to retain."
+            exit 0
+          fi
+
+          while IFS= read -r tag; do
+            [[ -z "$tag" || "$tag" == "$latest_tag" ]] && continue
+            gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --yes
+          done <<< "$stable_tags"
+
   # When a release was just published, build macOS/Windows and attach the zips
   # to it. Calling build.yml directly (instead of relying on the `release`
   # event) is required because a release created with GITHUB_TOKEN does not

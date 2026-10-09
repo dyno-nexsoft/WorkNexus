@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
@@ -15,6 +16,10 @@ import '../../features/agents/data/datasources/opencode_auth_file.dart';
 import '../../features/agents/data/datasources/opencode_cli_runner.dart';
 import '../../features/agents/data/in_memory_agent_session_repository.dart';
 import '../../features/agents/data/repositories/opencode_auth_file_repository.dart';
+import '../../features/app_update/data/datasources/github_release_datasource.dart';
+import '../../features/app_update/data/repositories/github_update_repository.dart';
+import '../../features/app_update/domain/repositories/update_repository.dart';
+import '../../features/app_update/domain/usecases/check_for_update.dart';
 import '../../features/board/data/repositories/local_saved_filter_repository.dart';
 import '../../features/board/domain/repositories/saved_filter_repository.dart';
 import '../../features/chat/data/datasources/chat_local_datasource.dart';
@@ -26,11 +31,11 @@ import '../../features/chat/data/repositories/local_sticker_repository.dart';
 import '../../features/chat/data/repositories/local_wallpaper_repository.dart';
 import '../../features/chat/data/repositories/xxd_chat_repository.dart';
 import '../../features/chat/domain/repositories/chat_repository.dart';
-import '../../features/chat/domain/repositories/message_translation_repository.dart';
-import '../../features/chat/domain/usecases/translate_chat_message.dart';
 import '../../features/chat/domain/repositories/link_preview_repository.dart';
+import '../../features/chat/domain/repositories/message_translation_repository.dart';
 import '../../features/chat/domain/repositories/sticker_repository.dart';
 import '../../features/chat/domain/repositories/wallpaper_repository.dart';
+import '../../features/chat/domain/usecases/translate_chat_message.dart';
 import '../../features/connections/data/local_connection_repository.dart';
 import '../../features/connections/domain/repositories/connection_repository.dart';
 import '../../features/sync/data/merge_request_link_fetcher.dart';
@@ -76,6 +81,26 @@ Future<void> configureDependencies(String environment) async =>
 /// in-memory instance without touching the production wiring.
 @module
 abstract class ServiceModule {
+  @lazySingleton
+  GitHubReleaseDatasource get githubReleaseDatasource =>
+      GitHubReleaseDatasource(
+        Dio(
+          BaseOptions(
+            connectTimeout: const Duration(seconds: 10),
+            receiveTimeout: const Duration(seconds: 10),
+          ),
+        ),
+      );
+
+  @lazySingleton
+  UpdateRepository updateRepository(
+    GitHubReleaseDatasource releaseDatasource,
+  ) => GitHubUpdateRepository(releaseDatasource);
+
+  @lazySingleton
+  CheckForUpdate checkForUpdate(UpdateRepository repository) =>
+      CheckForUpdate(repository);
+
   @prod
   @lazySingleton
   AppDatabase get database => AppDatabase();
